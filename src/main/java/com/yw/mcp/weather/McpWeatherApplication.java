@@ -1,6 +1,7 @@
 package com.yw.mcp.weather;
 
 import com.yw.mcp.weather.domain.service.WeatherService;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.tool.method.MethodToolCallbackProvider;
@@ -12,6 +13,9 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 @Slf4j
 public class McpWeatherApplication implements CommandLineRunner {
+
+    @Resource
+    private WeatherService weatherService;
 
     public static void main(String[] args) {
         SpringApplication.run(McpWeatherApplication.class, args);

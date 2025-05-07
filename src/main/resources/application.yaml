@@ -7,9 +7,11 @@ spring:
   ai:
     mcp:
       server:
+        stdio: true
         name: mcp-weather-server # 服务器名称
         version: 0.0.1         # 服务器版本
-
+gaode:
+  key: f2ac0c46c38413eadebce2d29a9126b2
 logging:
   pattern:
     console:
