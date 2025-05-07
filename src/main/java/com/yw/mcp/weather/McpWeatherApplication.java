@@ -18,12 +18,12 @@ public class McpWeatherApplication implements CommandLineRunner {
     }
 
     @Bean
-    public ToolCallbackProvider computerTools(WeatherService weatherService) {
+    public ToolCallbackProvider weatherTool(WeatherService weatherService) {
         return MethodToolCallbackProvider.builder().toolObjects(weatherService).build();
     }
 
     @Override
     public void run(String... args) throws Exception {
-        log.info("mcp server computer success!");
+        log.info("weather-mcp server computer success!");
     }
 }

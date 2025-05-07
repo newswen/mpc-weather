@@ -11,6 +11,10 @@ public class AmapWeatherResponse {
     private String info;
     private String infocode;
     private List<Forecast> forecasts;
+    //每日7点时的风力
+    private String windPower;
+    //每日7点时的风向
+    private String winddiRection;
 
     @Data
     public static class Forecast {

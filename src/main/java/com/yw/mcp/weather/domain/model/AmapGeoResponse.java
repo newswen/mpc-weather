@@ -18,7 +18,7 @@ public class AmapGeoResponse {
         private String province;
         private String citycode;
         private String city;
-        private String district;
+//        private String district;
         private String adcode;
         private String location;
     }

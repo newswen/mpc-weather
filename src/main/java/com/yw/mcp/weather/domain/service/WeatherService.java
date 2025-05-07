@@ -1,5 +1,6 @@
 package com.yw.mcp.weather.domain.service;
 
+import com.yw.mcp.weather.domain.model.AmapBaseWeatherResponse;
 import com.yw.mcp.weather.domain.model.AmapGeoResponse;
 import com.yw.mcp.weather.domain.model.AmapWeatherResponse;
 import org.springframework.ai.tool.annotation.Tool;
@@ -10,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class WeatherService {
 
-    @Value("${gaode.key}")
+    @Value("${gaode.key:f2ac0c46c38413eadebce2d29a9126b2}")
     private String amapKey;
 
     private final RestTemplate restTemplate = new RestTemplate();
@@ -18,7 +19,7 @@ public class WeatherService {
     private final String[] days = {"今日", "明日", "后日"};
 
 
-    @Tool(description = "根据地址查询天气预报（未来三天）")
+    @Tool(description = "根据地址查询当日的天气预报")
     public String getWeatherForecast(String address) {
         // Step 1: 获取adcode
         AmapWeatherResponse geoResponse = this.getWeatherByAddress(address);
@@ -41,7 +42,11 @@ public class WeatherService {
         // Step 2: 获取天气
         String weatherUrl = "https://restapi.amap.com/v3/weather/weatherInfo?city=" + adcode + "&key=" + amapKey + "&extensions=all";
         AmapWeatherResponse weatherResponse = restTemplate.getForObject(weatherUrl, AmapWeatherResponse.class);
-
+        ////因为高德地图返回的风力一直是3级的，就不采用这个
+        String windUrl = "https://restapi.amap.com/v3/weather/weatherInfo?city=" + adcode + "&key=" + amapKey + "&extensions=base";
+        AmapBaseWeatherResponse baseResponse = restTemplate.getForObject(windUrl, AmapBaseWeatherResponse.class);
+        weatherResponse.setWindPower(baseResponse.getLives().get(0).getWindpower());
+        weatherResponse.setWinddiRection(baseResponse.getLives().get(0).getWinddirection());
         return weatherResponse;
     }
 
@@ -52,21 +57,15 @@ public class WeatherService {
         // 格式化返回的天气预报
         AmapWeatherResponse.Forecast forecast = weatherResponse.getForecasts().get(0);
         StringBuilder weatherReport = new StringBuilder();
-        weatherReport.append("🌈").append(forecast.getCity()).append("未来三天天气预报🌈\n");
+//        weatherReport.append("🌈").append(forecast.getCity()).append("未来三天天气预报🌈\n");
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 1; i++) {
             AmapWeatherResponse.Forecast.Cast cast = forecast.getCasts().get(i);
             weatherReport.append("\uD83D\uDDD3").append(days[i]).append("【").append(cast.getDate()).append("】\n")
                     .append("  \uD83C\uDF24天气：").append(cast.getNightweather()).append(" / ").append(cast.getDayweather()).append("\n")
                     .append("  \uD83C\uDF21温度：").append(cast.getNighttemp()).append("°C ~ ").append(cast.getDaytemp()).append("°C\n")
-                    .append("  \uD83C\uDF00风力：").append(cast.getDaywind()).append("风").append(cast.getDaypower()).append("级\n");
-
-            // 如果不是最后一次循环，才添加分隔线
-            if (i < 2) { // 或者使用 i != forecast.getCasts().size() - 1 来动态判断
-                weatherReport.append("-------------------------------\n");
-            }
+                    .append("  \uD83C\uDF00风力：").append(weatherResponse.getWinddiRection()).append("风").append(weatherResponse.getWindPower()).append("级\n");
         }
-
         return weatherReport.toString();
     }
 }
