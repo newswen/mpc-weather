@@ -1,26 +1,29 @@
-spring:
-  application:
-    name: mcp-weather-server
-  main:
-    web-application-type: none  # 必须禁用web应用类型
-    banner-mode: off           # 禁用banner
-  ai:
-    mcp:
-      server:
-        stdio: true
-        name: mcp-weather-server # 服务器名称
-        version: 0.0.1         # 服务器版本
-gaode:
-  key: f2ac0c46c38413eadebce2d29a9126b2
-logging:
-  pattern:
-    console:
-  file:
-    name: ${spring.application.name}.log
-
 server:
+  port: 4011
   servlet:
     encoding:
       charset: UTF-8
       force: true
       enabled: true
+spring:
+  application:
+    name: mcp-weather-server
+#  main:
+#    web-application-type: none  # 必须禁用web应用类型
+#    banner-mode: off           # 禁用banner(启动横幅)
+  ai:
+    mcp:
+      server:
+#        stdio: true
+        name: mcp-weather-server # 服务器名称
+        version: 0.0.1         # 服务器版本
+#高德查询key
+gaode:
+  key: f2ac0c46c38413eadebce2d29a9126b2
+#日志打印
+logging:
+#  stdio打开，对于sse就进行关闭
+#  pattern:
+#    console:
+  file:
+    name: ${spring.application.name}.log

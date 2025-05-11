@@ -30,7 +30,7 @@ class McpWeatherApplicationTests {
 
     @Test
     void testJoke() {
-        log.info("笑话为:{}", weatherService.getJokes());
+        log.info("笑话为:{}", jokeService.getJokes());
     }
 
 

@@ -29,7 +29,6 @@ public class WeatherService {
 
     public WeatherService() {
         this.httpClient = new OkHttpClient.Builder().connectTimeout(30, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
-        this.objectMapper = new ObjectMapper();
     }
 
     private final String[] days = {"今日", "明日", "后日"};
@@ -93,46 +92,5 @@ public class WeatherService {
             weatherReport.append("\uD83D\uDDD3").append(days[i]).append("【").append(cast.getDate()).append("】\n").append("  \uD83C\uDF24天气：").append(cast.getNightweather()).append(" / ").append(cast.getDayweather()).append("\n").append("  \uD83C\uDF21温度：").append(cast.getNighttemp()).append("°C ~ ").append(cast.getDaytemp()).append("°C\n").append("  \uD83C\uDF00风力：").append(weatherResponse.getWinddiRection()).append("风").append(weatherResponse.getWindPower()).append("级\n");
         }
         return weatherReport.toString();
-    }
-
-
-    private static final String JOKE_URL = "https://www.mxnzp.com/api/jokes/list/random";
-    private static final String JOKE_APP_ID = "pdddpuglpovpip3m";
-    private static final String JOKE_APP_SECRET = "GSjp84VsFqZH2Yis7h9sQe4ieOgN5YXD";
-
-    private ObjectMapper objectMapper;
-
-    @Tool(description = "每日搞笑段子")
-    public String getJokes() {
-        // Build the request URL with the query parameters
-        String url = String.format("%s?app_id=%s&app_secret=%s", JOKE_URL, JOKE_APP_ID, JOKE_APP_SECRET);
-
-        // Create the request
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
-
-        // Send the request and handle the response
-        try (Response response = httpClient.newCall(request).execute()) {
-            if (response.isSuccessful()) {
-                // Parse the response body to a JokeResponse object
-                JokeResponse jokeResponse = objectMapper.readValue(response.body().string(), JokeResponse.class);
-
-                // Check if the response contains data
-                if (jokeResponse.getCode() == 1 && jokeResponse.getData() != null && !jokeResponse.getData().isEmpty()) {
-                    // Get the first joke content and return it
-                    return jokeResponse.getData().get(0).getContent();
-                } else {
-                    log.error("No jokes found or error in response: {}", jokeResponse.getMsg());
-                    return "No jokes available.";
-                }
-            } else {
-                log.error("Request failed with status code: {}", response.code());
-                return "Failed to fetch jokes.";
-            }
-        } catch (IOException e) {
-            log.error("Error during API call: ", e);
-            return "Error fetching jokes.";
-        }
     }
 }
